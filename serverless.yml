@@ -47,7 +47,7 @@ provider:
 
 functions:
   list:
-    handler: src/list.main
+    handler: src/actions/entries/list.main
     events:
       - http:
           path: entries
@@ -55,7 +55,7 @@ functions:
           cors: true
           authorizer: aws_iam
   create:
-    handler: src/create.main
+    handler: src/actions/entries/create.main
     events:
       - http:
           path: entries
@@ -63,7 +63,7 @@ functions:
           cors: true
           authorizer: aws_iam
   get:
-    handler: src/get.main
+    handler: src/actions/entries/get.main
     events:
       - http:
           path: entries/{id}
@@ -71,7 +71,7 @@ functions:
           cors: true
           authorizer: aws_iam
   update:
-    handler: src/update.main
+    handler: src/actions/entries/update.main
     events:
       - http:
           path: entries/{id}
@@ -79,7 +79,7 @@ functions:
           cors: true
           authorizer: aws_iam
   delete:
-    handler: src/delete.main
+    handler: src/actions/entries/delete.main
     events:
       - http:
           path: entries/{id}

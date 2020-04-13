@@ -1,4 +1,4 @@
-export default function handler(lambda) {
+export const handler = (lambda) => {
     return function (event, context) {
         return (
             Promise.resolve()
@@ -21,4 +21,4 @@ export default function handler(lambda) {
                 }))
         );
     };
-}
+};

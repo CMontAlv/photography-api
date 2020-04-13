@@ -2,7 +2,7 @@ Resources:
     EntriesTable:
         Type: AWS::DynamoDB::Table
         Properties:
-            TableName: ${self:custom.tableName}
+            TableName: ${self:custom.entriesTableName}
             AttributeDefinitions:
                 - AttributeName: userId
                   AttributeType: S
@@ -15,5 +15,19 @@ Resources:
                   KeyType: RANGE
             # Set the capacity to auto-scale
             ProvisionedThroughput:
-                ReadCapacityUnits: 5
-                WriteCapacityUnits: 5
+                ReadCapacityUnits: 3
+                WriteCapacityUnits: 3
+    PhotoKeyMappingsTable:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            TableName: ${self:custom.photoKeyMappingsTableName}
+            AttributeDefinitions:
+                - AttributeName: photoKey
+                  AttributeType: S
+            KeySchema:
+                - AttributeName: photoKey
+                  KeyType: HASH
+            # Set the capacity to auto-scale
+            ProvisionedThroughput:
+                ReadCapacityUnits: 3
+                WriteCapacityUnits: 3

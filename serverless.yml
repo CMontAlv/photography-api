@@ -14,7 +14,8 @@ custom:
     # commands. Or fallsback to what we have set in the provider section.
     stage: ${opt:stage, self:provider.stage}
     # Set the table name here so we can use it while testing locally
-    tableName: ${self:custom.stage}-entries
+    entriesTableName: ${self:custom.stage}-entries
+    photoKeyMappingsTableName: ${self:custom.stage}-photo-key-mappings
 
 provider:
     name: aws
@@ -25,7 +26,9 @@ provider:
     # These environment variables are made available to our functions
     # under process.env.
     environment:
-        tableName: ${self:custom.tableName}
+        entriesTableName: ${self:custom.entriesTableName}
+        photoKeyMappingsTableName: ${self:custom.photoKeyMappingsTableName}
+        proccessedPhotoBucket: !Ref ProcessedPhotoBucket
 
     # 'iamRoleStatements' defines the permission policy for the Lambda function.
     # In this case Lambda functions are granted with permissions to access DynamoDB.
@@ -43,6 +46,11 @@ provider:
           # the specific table for the stage
           Resource:
               - 'Fn::GetAtt': [EntriesTable, Arn]
+        - Effect: Allow
+          Action:
+              - s3:PutBucketNotification
+          Resource:
+              - 'Fn::GetAtt': [PhotoBucket, Arn]
 
 functions:
     list:
@@ -85,6 +93,14 @@ functions:
                   method: delete
                   cors: true
                   authorizer: aws_iam
+
+    processPhotos:
+        handler: src/actions/process-photos/resize.main
+        events:
+            - s3:
+                  bucket: !Ref PhotoBucket
+                  event: s3:ObjectCreated:*
+                  existing: true
 
 # Create our resources with separate CloudFormation templates
 resources:

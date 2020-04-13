@@ -30,7 +30,7 @@
     "dependencies": {
         "aws-sdk": "^2.656.0",
         "sharp": "^0.25.2",
-        "uuid": "^7.0.3",
-        "source-map-support": "^0.5.10"
+        "source-map-support": "^0.5.10",
+        "uuid": "^7.0.3"
     }
 }

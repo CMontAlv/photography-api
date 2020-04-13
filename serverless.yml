@@ -31,7 +31,8 @@ provider:
     environment:
         entriesTableName: ${self:custom.entriesTableName}
         photoKeyMappingsTableName: ${self:custom.photoKeyMappingsTableName}
-        proccessedPhotoBucket: !Ref ProcessedPhotoBucket
+        proccessedPhotoBucket:
+            - 'Fn::GetAtt': [ProcessedPhotoBucket, BucketName]
 
     # 'iamRoleStatements' defines the permission policy for the Lambda function.
     # In this case Lambda functions are granted with permissions to access DynamoDB.
@@ -97,7 +98,7 @@ functions:
                   cors: true
                   authorizer: aws_iam
 
-    processPhotos:
+    resize:
         handler: src/actions/process-photos/resize.main
         events:
             - s3:

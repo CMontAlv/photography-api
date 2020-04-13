@@ -6,17 +6,17 @@ import { s3 } from '../../libs/s3-lib';
 const processEvent = (event) => {
     const srcBucket = event.Records[0].s3.bucket.name;
     // Object key may have spaces or unicode non-ASCII characters.
-    const srcKey = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
+    const key = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
 
     return {
         srcBucket,
-        srcKey,
+        key,
     };
 };
 
-const isTypeSupported = (srcKey) => {
+const isTypeSupported = (key) => {
     // Infer the image type from the file suffix.
-    const typeMatch = srcKey.match(/\.([^.]*)$/);
+    const typeMatch = key.match(/\.([^.]*)$/);
 
     if (!typeMatch) {
         console.log('Could not determine the image type.');
@@ -33,30 +33,30 @@ const isTypeSupported = (srcKey) => {
     return true;
 };
 
-export const main = handler(async (event, context, callback) => {
-    const { srcBucket, srcKey } = processEvent(event);
+export const main = handler(async (event) => {
+    const { srcBucket, key } = processEvent(event);
 
-    if (!isTypeSupported(srcKey)) {
+    if (!isTypeSupported(key)) {
         throw new Error('Non supported file type');
         return;
     }
 
     const targetBucket = process.env.proccessedPhotoBucket;
-    const targetKey = 'resized-' + srcKey;
 
     const photoParams = {
         Bucket: srcBucket,
-        Key: srcKey,
+        Key: key,
     };
 
     const photo = await s3.get(photoParams);
 
+    console.log('WE MADE IT HERE 3');
     const resizeWidth = 200;
     const resizedPhoto = await sharp(photo.Body).resize(resizeWidth).toBuffer();
 
     const destparams = {
         Bucket: targetBucket,
-        Key: targetKey,
+        Key: key,
         Body: resizedPhoto,
         ContentType: 'image',
     };

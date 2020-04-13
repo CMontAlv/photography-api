@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 
-import handler from '../../libs/handler-lib';
+import { handler } from '../../libs/handler-lib';
 import { s3 } from '../../libs/s3-lib';
 
 const processEvent = (event) => {
@@ -37,7 +37,8 @@ export const main = handler(async (event, context, callback) => {
     const { srcBucket, srcKey } = processEvent(event);
 
     if (!isTypeSupported(srcKey)) {
-        return throw new Error('Non supported file type');
+        throw new Error('Non supported file type');
+        return;
     }
 
     const targetBucket = process.env.proccessedPhotoBucket;

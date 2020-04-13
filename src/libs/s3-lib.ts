@@ -1,6 +1,6 @@
-import AWS from 'aws-sdk';
+import { S3 } from 'aws-sdk';
 
-const storage = new AWS.S3();
+const storage = new S3();
 
 export const s3 = {
     get: (params) => storage.getObject(params).promise(),

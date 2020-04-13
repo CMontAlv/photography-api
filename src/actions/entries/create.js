@@ -10,7 +10,7 @@ export const main = handler(async (event, context) => {
             userId: event.requestContext.identity.cognitoIdentityId,
             entryId: uuid.v1(),
             content: data.content,
-            attachment: data.attachment,
+            photoKey: data.photoKey,
             createdAt: Date.now(),
         },
     };

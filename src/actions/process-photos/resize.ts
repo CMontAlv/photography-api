@@ -1,4 +1,4 @@
-import sharp from 'sharp';
+import Jimp from 'jimp';
 
 import { handler } from '../../libs/handler-lib';
 import { s3 } from '../../libs/s3-lib';
@@ -50,9 +50,11 @@ export const main = handler(async (event) => {
 
     const photo = await s3.get(photoParams);
 
-    console.log('WE MADE IT HERE 3');
     const resizeWidth = 200;
-    const resizedPhoto = await sharp(photo.Body).resize(resizeWidth).toBuffer();
+    // @ts-ignore
+    const resizedPhoto = await Jimp.read(photo.Body)
+        .then((image) => image.resize(resizeWidth, resizeWidth).quality(100).getBufferAsync(Jimp.MIME_JPEG))
+        .catch((e) => e);
 
     const destparams = {
         Bucket: targetBucket,

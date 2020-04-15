@@ -29,7 +29,7 @@
     },
     "dependencies": {
         "aws-sdk": "^2.656.0",
-        "sharp": "^0.25.2",
+        "jimp": "^0.10.2",
         "source-map-support": "^0.5.10",
         "uuid": "^7.0.3"
     }

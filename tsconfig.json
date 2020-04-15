@@ -9,7 +9,8 @@
         "target": "es2017",
         "outDir": "lib",
         "preserveConstEnums": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "allowSyntheticDefaultImports": true
     },
     "include": ["./**/*.ts"],
     "exclude": ["node_modules/**/*", ".serverless/**/*", ".webpack/**/*", "_warmup/**/*"]

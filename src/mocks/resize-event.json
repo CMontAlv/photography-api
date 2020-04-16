@@ -27,7 +27,7 @@
                     "arn": "arn:aws:s3:::sourcebucket"
                 },
                 "object": {
-                    "key": "private/eu-west-2:ec5ec918-42a8-4f4f-b89a-35457047f88c/1586821258763-Screenshot 2020-01-29 at 10.13.47.png",
+                    "key": "private/eu-west-2:ec5ec918-42a8-4f4f-b89a-35457047f88c/1586993961170-Screenshot 2020-01-29 at 10.13.47.png",
                     "size": 1024,
                     "eTag": "d41d8cd98f00b204e9800998ecf8427e",
                     "versionId": "096fKKXTRTtl3on89fVO.nfljtsv6qko"

@@ -3,6 +3,8 @@ import Jimp from 'jimp';
 import { handler } from '../../libs/handler-lib';
 import { s3 } from '../../libs/s3-lib';
 
+import { PHOTO_SIZES } from './constants';
+
 const processEvent = (event) => {
     const srcBucket = event.Records[0].s3.bucket.name;
     // Object key may have spaces or unicode non-ASCII characters.
@@ -33,6 +35,31 @@ const isTypeSupported = (key) => {
     return true;
 };
 
+const getResizedImagesArray = (image: Jimp, sizes: Array<number> = PHOTO_SIZES): Promise<Buffer>[] => {
+    const width = image.bitmap.width;
+    const height = image.bitmap.height;
+
+    const isLandscape = width > height;
+
+    return sizes.map(async (size) => {
+        const newWidth = isLandscape ? size : (width / height) * size;
+        const newHeight = isLandscape ? (height / width) * size : size;
+
+        return await image.resize(newWidth, newHeight).quality(100).getBufferAsync(Jimp.MIME_JPEG);
+    });
+};
+
+const processPhoto = async (image: Buffer) => {
+    const result = await Jimp.read(image)
+        .then(getResizedImagesArray)
+        .catch((e) => {
+            console.log(e);
+            throw new Error('Error processing photos');
+        });
+
+    return result;
+};
+
 export const main = handler(async (event) => {
     const { srcBucket, key } = processEvent(event);
 
@@ -50,20 +77,19 @@ export const main = handler(async (event) => {
 
     const photo = await s3.get(photoParams);
 
-    const resizeWidth = 200;
     // @ts-ignore
-    const resizedPhoto = await Jimp.read(photo.Body)
-        .then((image) => image.resize(resizeWidth, resizeWidth).quality(100).getBufferAsync(Jimp.MIME_JPEG))
-        .catch((e) => e);
+    const resizedPhotos = await processPhoto(photo.Body);
 
-    const destparams = {
-        Bucket: targetBucket,
-        Key: key,
-        Body: resizedPhoto,
-        ContentType: 'image',
-    };
+    resizedPhotos.forEach(async (photo, index) => {
+        const destparams = {
+            Bucket: targetBucket,
+            Key: `${key}-${PHOTO_SIZES[index]}`,
+            Body: await photo,
+            ContentType: 'image',
+        };
 
-    const putResult = await s3.put(destparams);
+        await s3.put(destparams);
+    });
 
-    return putResult;
+    return { status: 200 };
 });
